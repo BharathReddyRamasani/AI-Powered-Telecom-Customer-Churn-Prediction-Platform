@@ -16,7 +16,8 @@ def train_and_serialize():
     print("🚀 Starting Model Training Pipeline...")
     
     # 1. Load Data
-    data_path = 'd:/tekworks/AI-Powered-Telecom-Customer-Churn-Prediction-Platform/data/Telco-Customer-Churn.csv'
+    # Use relative paths for portability
+    data_path = 'data/Telco-Customer-Churn.csv'
     if not os.path.exists(data_path):
         raise FileNotFoundError(f"Dataset not found at {data_path}")
         
@@ -47,8 +48,8 @@ def train_and_serialize():
         'all_cols': list(X.columns)
     }
     
-    os.makedirs('d:/tekworks/AI-Powered-Telecom-Customer-Churn-Prediction-Platform/models', exist_ok=True)
-    with open('d:/tekworks/AI-Powered-Telecom-Customer-Churn-Prediction-Platform/models/col_specs.json', 'w') as f:
+    os.makedirs('models', exist_ok=True)
+    with open('models/col_specs.json', 'w') as f:
         json.dump(col_specs, f, indent=4)
         
     print(f"Numeric features: {numeric_cols}")
@@ -102,11 +103,11 @@ def train_and_serialize():
     for k, v in metrics.items():
         print(f"{k.capitalize()}: {v:.4f}")
         
-    with open('d:/tekworks/AI-Powered-Telecom-Customer-Churn-Prediction-Platform/models/metrics.json', 'w') as f:
+    with open('models/metrics.json', 'w') as f:
         json.dump(metrics, f, indent=4)
         
     # Save the classification pipeline
-    joblib.dump(classification_pipeline, 'd:/tekworks/AI-Powered-Telecom-Customer-Churn-Prediction-Platform/models/churn_model.pkl')
+    joblib.dump(classification_pipeline, 'models/churn_model.pkl')
     print("Saved churn classifier pipeline to models/churn_model.pkl")
     
     # 6. Customer Clustering Pipeline
@@ -187,11 +188,11 @@ def train_and_serialize():
         print(f"  Dominant Contract: {dom_contract}, Internet: {dom_internet}")
     
     # Save clustering models and information
-    joblib.dump(clustering_preprocessor, 'd:/tekworks/AI-Powered-Telecom-Customer-Churn-Prediction-Platform/models/preprocessor_for_clustering.pkl')
-    joblib.dump(kmeans, 'd:/tekworks/AI-Powered-Telecom-Customer-Churn-Prediction-Platform/models/kmeans_model.pkl')
-    joblib.dump(pca, 'd:/tekworks/AI-Powered-Telecom-Customer-Churn-Prediction-Platform/models/pca_model.pkl')
+    joblib.dump(clustering_preprocessor, 'models/preprocessor_for_clustering.pkl')
+    joblib.dump(kmeans, 'models/kmeans_model.pkl')
+    joblib.dump(pca, 'models/pca_model.pkl')
     
-    with open('d:/tekworks/AI-Powered-Telecom-Customer-Churn-Prediction-Platform/models/cluster_profiles.json', 'w') as f:
+    with open('models/cluster_profiles.json', 'w') as f:
         json.dump(cluster_profiles, f, indent=4)
         
     print("Saved clustering artifacts successfully.")

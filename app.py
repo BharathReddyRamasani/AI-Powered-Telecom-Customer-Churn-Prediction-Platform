@@ -17,24 +17,25 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Apply premium modern UI custom styles
+# Apply premium glassmorphic dark-mode custom styles
 st.markdown("""
 <style>
-    /* Main Background and Typography */
+    /* Dark Theme Background and Typography */
     .stApp {
-        background-color: #f8fafc;
-        color: #0f172a;
+        background-color: #0b0f19;
+        color: #f1f5f9;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     
     /* Header styling */
     .app-header {
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
         color: white;
-        padding: 2.5rem 2rem;
+        padding: 2.2rem 2rem;
         border-radius: 16px;
         margin-bottom: 2rem;
-        box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.2);
+        box-shadow: 0 10px 25px -5px rgba(3b, 82, 246, 0.15);
+        border: 1px solid #1e3a8a;
     }
     .app-title {
         font-size: 2.2rem;
@@ -49,19 +50,20 @@ st.markdown("""
         font-weight: 400;
     }
     
-    /* Glassmorphic Cards */
+    /* Sleek Slate Cards */
     .metric-card {
-        background-color: white;
+        background-color: #1e293b;
         border-radius: 12px;
         padding: 1.5rem;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #334155;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
         text-align: center;
         transition: transform 0.2s, box-shadow 0.2s;
     }
     .metric-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        border-color: #475569;
     }
     .metric-val {
         font-size: 2rem;
@@ -70,8 +72,8 @@ st.markdown("""
         margin-bottom: 0.5rem;
     }
     .metric-label {
-        font-size: 0.875rem;
-        color: #64748b;
+        font-size: 0.825rem;
+        color: #94a3b8;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
@@ -85,43 +87,47 @@ st.markdown("""
         border-left: 6px solid;
     }
     .risk-banner-critical {
-        background-color: #fef2f2;
+        background-color: #2d1616;
         border-left-color: #ef4444;
-        color: #991b1b;
+        color: #fca5a5;
+        border: 1px solid #ef444440;
     }
     .risk-banner-high {
-        background-color: #fff7ed;
+        background-color: #2c1a10;
         border-left-color: #f97316;
-        color: #c2410c;
+        color: #fed7aa;
+        border: 1px solid #f9731640;
     }
     .risk-banner-medium {
-        background-color: #fef9c3;
+        background-color: #2b2512;
         border-left-color: #eab308;
-        color: #854d0e;
+        color: #fef08a;
+        border: 1px solid #eab30840;
     }
     .risk-banner-low {
-        background-color: #f0fdf4;
+        background-color: #12251a;
         border-left-color: #22c55e;
-        color: #166534;
+        color: #bbf7d0;
+        border: 1px solid #22c55e40;
     }
     
     .recommendation-box {
-        background-color: white;
-        border: 1px solid #e2e8f0;
+        background-color: #1e293b;
+        border: 1px solid #334155;
         border-radius: 8px;
         padding: 1rem;
         margin-bottom: 0.75rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
     .rec-title {
         font-weight: 700;
         font-size: 1rem;
         margin-bottom: 0.25rem;
-        color: #1e3a8a;
+        color: #60a5fa;
     }
     .rec-desc {
         font-size: 0.9rem;
-        color: #475569;
+        color: #cbd5e1;
     }
     
     /* Segment Persona Badge */
@@ -139,21 +145,56 @@ st.markdown("""
     .section-title {
         font-size: 1.35rem;
         font-weight: 700;
-        color: #1e293b;
+        color: #f1f5f9;
         margin-top: 1.5rem;
         margin-bottom: 1rem;
         padding-bottom: 0.5rem;
-        border-bottom: 2px solid #e2e8f0;
+        border-bottom: 2px solid #334155;
+    }
+    
+    /* Tabs font color adaptation */
+    .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
+        font-weight: 700;
+        font-size: 1.05rem;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# 2. LOAD DATA AND MODELS (WITH CACHING)
+# 2. UTILITY TO STYLE MATPLOTLIB PLOTS IN DARK THEME
+# ---------------------------------------------------------
+def apply_dark_plot_style(ax, fig):
+    # Set backgrounds
+    fig.patch.set_facecolor('#1e293b')
+    ax.set_facecolor('#1e293b')
+    
+    # Grid and borders
+    ax.spines['bottom'].set_color('#475569')
+    ax.spines['top'].set_color('#475569')
+    ax.spines['left'].set_color('#475569')
+    ax.spines['right'].set_color('#475569')
+    ax.grid(True, color='#334155', linestyle='--', alpha=0.5)
+    
+    # Label colors
+    ax.xaxis.label.set_color('#94a3b8')
+    ax.yaxis.label.set_color('#94a3b8')
+    ax.title.set_color('#f1f5f9')
+    ax.tick_params(colors='#94a3b8', which='both')
+    
+    # Legend color
+    legend = ax.get_legend()
+    if legend:
+        legend.get_frame().set_facecolor('#1e293b')
+        legend.get_frame().set_edgecolor('#475569')
+        for text in legend.get_texts():
+            text.set_color('#cbd5e1')
+
+# ---------------------------------------------------------
+# 3. LOAD DATA AND MODELS (WITH RELATIVE PATHS & CACHING)
 # ---------------------------------------------------------
 @st.cache_data
 def load_raw_data():
-    df = pd.read_csv('d:/tekworks/AI-Powered-Telecom-Customer-Churn-Prediction-Platform/data/Telco-Customer-Churn.csv')
+    df = pd.read_csv('data/Telco-Customer-Churn.csv')
     df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
     df.dropna(subset=['TotalCharges'], inplace=True)
     df['SeniorCitizen_Str'] = df['SeniorCitizen'].map({0: 'No', 1: 'Yes'})
@@ -161,7 +202,7 @@ def load_raw_data():
 
 @st.cache_resource
 def load_ml_models():
-    models_dir = 'd:/tekworks/AI-Powered-Telecom-Customer-Churn-Prediction-Platform/models'
+    models_dir = 'models'
     churn_model = joblib.load(os.path.join(models_dir, 'churn_model.pkl'))
     kmeans_model = joblib.load(os.path.join(models_dir, 'kmeans_model.pkl'))
     pca_model = joblib.load(os.path.join(models_dir, 'pca_model.pkl'))
@@ -184,11 +225,11 @@ try:
     churn_model, kmeans_model, pca_model, preprocessor_clustering, cluster_profiles, col_specs, metrics = load_ml_models()
     models_loaded = True
 except Exception as e:
-    st.error(f"Failed to load models or dataset. Please run `python src/train.py` first. Error: {e}")
+    st.error(f"Failed to load models or dataset. Please run python src/train.py first. Error: {e}")
     models_loaded = False
 
 # ---------------------------------------------------------
-# 3. SIDEBAR CONTROLS
+# 4. SIDEBAR CONTROLS
 # ---------------------------------------------------------
 st.sidebar.image("https://img.icons8.com/color/96/000000/telecommunication-tower.png", width=70)
 st.sidebar.markdown("### **Telecom Churn Engine**")
@@ -201,7 +242,7 @@ if models_loaded:
     st.sidebar.info(f"Active Customers Analyzed: {len(df_raw):,}")
 
 # ---------------------------------------------------------
-# 4. MAIN INTERFACE HEADER
+# 5. MAIN INTERFACE HEADER
 # ---------------------------------------------------------
 st.markdown("""
 <div class="app-header">
@@ -231,9 +272,7 @@ if models_loaded:
         total_monthly_revenue = df_raw['MonthlyCharges'].sum()
         
         # Predict on all dataset using classification model to find Expected Revenue Loss
-        # Make a copy of raw data, drop customerID and Churn
         X_all = df_raw.drop(columns=['customerID', 'Churn'])
-        # Map SeniorCitizen numeric back to Yes/No string as train.py preprocessor expects
         X_all['SeniorCitizen'] = X_all['SeniorCitizen'].map({0: 'No', 1: 'Yes'})
         
         # Run classification pipeline
@@ -246,7 +285,7 @@ if models_loaded:
         with kpi_col1:
             st.markdown(f"""
             <div class="metric-card">
-                <div class="metric-val" style="color: #1e3a8a;">{total_customers:,}</div>
+                <div class="metric-val" style="color: #60a5fa;">{total_customers:,}</div>
                 <div class="metric-label">Total Accounts</div>
             </div>
             """, unsafe_allow_html=True)
@@ -254,7 +293,7 @@ if models_loaded:
         with kpi_col2:
             st.markdown(f"""
             <div class="metric-card">
-                <div class="metric-val" style="color: #ef4444;">{actual_churn_rate:.1%}</div>
+                <div class="metric-val" style="color: #f87171;">{actual_churn_rate:.1%}</div>
                 <div class="metric-label">Historical Churn</div>
             </div>
             """, unsafe_allow_html=True)
@@ -262,7 +301,7 @@ if models_loaded:
         with kpi_col3:
             st.markdown(f"""
             <div class="metric-card">
-                <div class="metric-val" style="color: #10b981;">${total_monthly_revenue/1e3:.1f}k</div>
+                <div class="metric-val" style="color: #34d399;">${total_monthly_revenue/1e3:.1f}k</div>
                 <div class="metric-label">Monthly Contract Value</div>
             </div>
             """, unsafe_allow_html=True)
@@ -270,7 +309,7 @@ if models_loaded:
         with kpi_col4:
             st.markdown(f"""
             <div class="metric-card">
-                <div class="metric-val" style="color: #f97316;">${expected_monthly_loss/1e3:.1f}k</div>
+                <div class="metric-val" style="color: #fb923c;">${expected_monthly_loss/1e3:.1f}k</div>
                 <div class="metric-label">Monthly Expected Churn Loss</div>
             </div>
             """, unsafe_allow_html=True)
@@ -283,41 +322,41 @@ if models_loaded:
         with chart_col1:
             # Churn distribution pie chart
             fig, ax = plt.subplots(figsize=(6, 4))
-            fig.patch.set_facecolor('#f8fafc')
-            ax.set_facecolor('#f8fafc')
+            fig.patch.set_facecolor('#1e293b')
+            ax.set_facecolor('#1e293b')
             
             churn_counts = df_raw['Churn'].value_counts()
-            ax.pie(
+            wedges, texts, autotexts = ax.pie(
                 churn_counts, 
-                labels=['Stayed (Active)', 'Churned'], 
+                labels=['Stayed', 'Churned'], 
                 autopct='%1.1f%%',
                 startangle=90, 
                 colors=['#3b82f6', '#ef4444'],
-                wedgeprops=dict(width=0.4, edgecolor='w')
+                wedgeprops=dict(width=0.45, edgecolor='#334155'),
+                textprops=dict(color='#cbd5e1', fontweight='bold')
             )
-            ax.set_title("Customer Cohort Status (Actual)", fontsize=11, fontweight='bold', pad=15)
+            for autotext in autotexts:
+                autotext.set_color('white')
+            
+            ax.set_title("Customer Cohort Status (Actual)", fontsize=12, fontweight='bold', pad=15, color='#f1f5f9')
             st.pyplot(fig)
             
             # Contract type churn analysis
             fig2, ax2 = plt.subplots(figsize=(6, 4.5))
-            fig2.patch.set_facecolor('#f8fafc')
-            ax2.set_facecolor('#f8fafc')
-            
             contract_churn = pd.crosstab(df_raw['Contract'], df_raw['Churn'], normalize='index') * 100
-            contract_churn.plot(kind='bar', stacked=True, color=['#3b82f6', '#ef4444'], ax=ax2)
+            contract_churn.plot(kind='bar', stacked=True, color=['#3b82f6', '#ef4444'], ax=ax2, edgecolor='#334155')
             
-            ax2.set_title("Churn Rate by Contract Type", fontsize=11, fontweight='bold', pad=15)
+            ax2.set_title("Churn Rate by Contract Type", fontsize=12, fontweight='bold', pad=15, color='#f1f5f9')
             ax2.set_ylabel("Percentage (%)")
             ax2.set_xlabel("Contract Type")
             ax2.legend(["Stayed", "Churned"], loc="lower left")
             plt.xticks(rotation=0)
+            apply_dark_plot_style(ax2, fig2)
             st.pyplot(fig2)
             
         with chart_col2:
             # Model Feature Importance
             fig3, ax3 = plt.subplots(figsize=(6, 9.5))
-            fig3.patch.set_facecolor('#f8fafc')
-            ax3.set_facecolor('#f8fafc')
             
             # Extract features from pipeline preprocessor
             classifier = churn_model.named_steps['classifier']
@@ -333,13 +372,13 @@ if models_loaded:
                 'Importance': importances
             }).sort_values(by='Importance', ascending=True).tail(12)
             
-            # Clean feature names for presentation
             feat_imp_df['Feature'] = feat_imp_df['Feature'].str.replace('cat__', '').str.replace('num__', '')
             
-            colors = ['#93c5fd' if x < feat_imp_df['Importance'].max() * 0.7 else '#1d4ed8' for x in feat_imp_df['Importance']]
-            ax3.barh(feat_imp_df['Feature'], feat_imp_df['Importance'], color=colors)
-            ax3.set_title("Key Drivers of Customer Churn (RF Importance)", fontsize=11, fontweight='bold', pad=15)
+            colors = ['#60a5fa' if x < feat_imp_df['Importance'].max() * 0.7 else '#2563eb' for x in feat_imp_df['Importance']]
+            ax3.barh(feat_imp_df['Feature'], feat_imp_df['Importance'], color=colors, edgecolor='#334155')
+            ax3.set_title("Key Drivers of Customer Churn (RF Importance)", fontsize=12, fontweight='bold', pad=15, color='#f1f5f9')
             ax3.set_xlabel("Relative Predictive Power")
+            apply_dark_plot_style(ax3, fig3)
             st.pyplot(fig3)
             
     # ---------------------------------------------------------
@@ -395,11 +434,9 @@ if models_loaded:
                 sim_tenure = st.slider("Account Tenure (Months)", 1, 72, 12)
                 sim_monthly = st.slider("Monthly Charges ($)", 18.0, 120.0, 75.0)
                 
-                # Dynamic default for Total Charges
                 calculated_total = float(sim_monthly * sim_tenure)
                 sim_total = st.number_input("Total Charges ($)", min_value=0.0, value=calculated_total, step=50.0)
                 
-            # Create a single row DataFrame matching training features
             input_dict = {
                 "gender": sim_gender,
                 "SeniorCitizen": sim_senior,
@@ -426,10 +463,8 @@ if models_loaded:
         with sim_col_results:
             st.markdown("### 📊 Predicted Account Status")
             
-            # 1. Run churn prediction
             prob_churn = churn_model.predict_proba(sim_df)[0][1]
             
-            # Classify risk level
             if prob_churn >= 0.65:
                 risk_cat = "Critical Risk"
                 risk_style = "risk-banner-critical"
@@ -451,108 +486,93 @@ if models_loaded:
                 risk_color = "#22c55e"
                 risk_icon = "✅"
                 
-            # Expected Monthly Loss calculation
             exp_loss_val = prob_churn * sim_monthly
             
-            # 2. Run clustering to determine cohort
-            # Run preprocessor for clustering
-            # Map SeniorCitizen Yes/No to match encoding
             clustering_input_df = sim_df.copy()
             encoded_sim = preprocessor_clustering.transform(clustering_input_df)
             
-            # Predict cluster
             sim_cluster = int(kmeans_model.predict(encoded_sim)[0])
             sim_pca_coords = pca_model.transform(encoded_sim)[0]
             
-            # Find cluster profile
             sim_profile = next(item for item in cluster_profiles if item["cluster_id"] == sim_cluster)
             
-            # Define badge color based on cluster
-            badge_colors = ["#1e3a8a", "#0f766e", "#991b1b", "#854d0e"]
-            badge_bg = ["#dbeafe", "#ccfbf1", "#fee2e2", "#fef9c3"]
+            # Bright colors suitable for dark themes
+            badge_colors = ["#3b82f6", "#10b981", "#ef4444", "#fb923c"]
+            badge_bg = ["#1e3a8a40", "#064e3b40", "#7f1d1d40", "#7c2d1240"]
             c_color = badge_colors[sim_cluster]
             c_bg = badge_bg[sim_cluster]
             
-            # Render risk banner
             st.markdown(f"""
             <div class="risk-banner {risk_style}">
                 <div style="font-size: 1.25rem; font-weight: 800;">{risk_icon} Account Status: {risk_cat}</div>
                 <div style="font-size: 2.2rem; font-weight: 900; margin: 0.5rem 0;">{prob_churn:.1%}</div>
-                <div style="font-size: 0.95rem; font-weight: 500; opacity: 0.9;">Probability of churn within next 30 days</div>
+                <div style="font-size: 0.95rem; font-weight: 500; opacity: 0.95;">Probability of churn within next 30 days</div>
             </div>
             """, unsafe_allow_html=True)
             
-            # Financial metrics sub-columns
             sub_c1, sub_c2 = st.columns(2)
             with sub_c1:
                 st.markdown(f"""
                 <div class="metric-card" style="padding: 1rem;">
-                    <div class="metric-val" style="font-size: 1.6rem; color: #0f172a;">${sim_monthly:.2f}</div>
+                    <div class="metric-val" style="font-size: 1.6rem; color: #f8fafc;">${sim_monthly:.2f}</div>
                     <div class="metric-label" style="font-size: 0.75rem;">Monthly Billing</div>
                 </div>
                 """, unsafe_allow_html=True)
             with sub_c2:
                 st.markdown(f"""
-                <div class="metric-card" style="padding: 1rem; border: 1px solid #fed7aa; background-color: #fffaf5;">
-                    <div class="metric-val" style="font-size: 1.6rem; color: #f97316;">${exp_loss_val:.2f}</div>
+                <div class="metric-card" style="padding: 1rem; border: 1px solid #f9731640; background-color: #2c1a10;">
+                    <div class="metric-val" style="font-size: 1.6rem; color: #fb923c;">${exp_loss_val:.2f}</div>
                     <div class="metric-label" style="font-size: 0.75rem;">Expected Monthly Loss</div>
                 </div>
                 """, unsafe_allow_html=True)
                 
             st.markdown('<div class="section-title">Identified Segment Persona</div>', unsafe_allow_html=True)
             st.markdown(f"""
-            <div style="background-color: {c_bg}; border: 1px solid {c_color}40; border-radius: 12px; padding: 1.25rem;">
+            <div style="background-color: {c_bg}; border: 1px solid {c_color}60; border-radius: 12px; padding: 1.25rem;">
                 <div class="persona-badge" style="background-color: {c_color}; color: white;">Segment {sim_cluster}: {sim_profile['persona']}</div>
-                <div style="font-size: 0.95rem; line-height: 1.5; color: #1e293b;">
+                <div style="font-size: 0.95rem; line-height: 1.5; color: #cbd5e1;">
                     <strong>Profile Description:</strong> {sim_profile['description']}<br>
                     <strong>Avg tenure in segment:</strong> {sim_profile['avg_tenure']:.1f} months<br>
                     <strong>Avg Monthly Spend:</strong> ${sim_profile['avg_monthly_charges']:.2f}<br>
-                    <strong>Segment Churn Rate:</strong> {sim_profile['churn_rate']:.1%}
+                    <strong>Segment Churn Rate:</strong> <span style="color: {c_color}; font-weight: bold;">{sim_profile['churn_rate']:.1%}</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
             
-            # 3. Dynamic Retention Recommendations Engine
             st.markdown('<div class="section-title">Automated Retention Recommendations</div>', unsafe_allow_html=True)
             
             recommendations = []
             
-            # Recommendation 1: Contract loyalty upgrade
             if sim_contract == "Month-to-month":
                 recommendations.append({
                     "title": "📜 Upgrade Contract Plan",
                     "desc": "Switching month-to-month contracts to 1-Year lock-in reduces churn rates by over 40% in this cohort. Propose a 12-month agreement with a 15% billing discount."
                 })
                 
-            # Recommendation 2: Auto-pay conversion
             if "automatic" not in sim_payment:
                 recommendations.append({
                     "title": "💳 Credit Card / Bank Auto-Pay Credit",
                     "desc": "Switching electronic or mailed check billing to Credit Card or Bank Transfer Auto-Pay drastically stabilizes tenure. Offer a one-time $10 account credit for sign-up."
                 })
                 
-            # Recommendation 3: Technical service bundles
             if sim_internet == "Fiber optic" and (sim_security == "No" or sim_techsupport == "No"):
                 recommendations.append({
                     "title": "🛡️ Bundle Premium Tech Support & Security",
                     "desc": "High-spend fiber users without technical services churn at high rates. Offer a 3-month free trial of Online Security + Tech Support to drive retention."
                 })
                 
-            # Recommendation 4: Connection check-up (Fiber optic high-churn cohorts)
             if sim_internet == "Fiber optic" and prob_churn > 0.5:
                 recommendations.append({
                     "title": "📡 High-Performance Fiber Health Audit",
                     "desc": "Simulated user resides in a high-churn fiber segment. Task customer support to run a proactive remote speed diagnostic and contact client to check connection satisfaction."
                 })
                 
-            # Recommendation 5: Long-term loyal onboarding candidate
             if sim_tenure < 6 and prob_churn > 0.4:
                 recommendations.append({
                     "title": "👋 New Account Relationship Check-in",
                     "desc": "Client is within critical early lifecycle (tenure < 6 mos) showing high churn risk. Flag account for a personalized outreach call from the Customer Success onboarding team."
                 })
                 
-            # If no alerts, generic upsell
             if not recommendations:
                 recommendations.append({
                     "title": "🎁 Loyalty Rewards & Premium Add-ons",
@@ -576,14 +596,11 @@ if models_loaded:
         coh_col_plot, coh_col_stats = st.columns([1.2, 1])
         
         with coh_col_plot:
-            # 2D PCA representation plot
             st.markdown("### 🗺️ PCA Dimension Space Projection")
             st.write("Visualizing the customer base in 2D space. K-Means clustering partitions customers based on demographics, billing, and services. The large yellow star represents the active customer simulated in Tab 2.")
             
-            # Build data frame for plotting PCA
             df_pca_plot = pd.DataFrame(df_raw.copy())
             
-            # Predict clusters for entire dataset using clustering preprocessor
             encoded_all = preprocessor_clustering.transform(df_raw.drop(columns=['customerID', 'Churn']).assign(SeniorCitizen=df_raw['SeniorCitizen_Str']))
             all_clusters = kmeans_model.predict(encoded_all)
             all_pca = pca_model.transform(encoded_all)
@@ -592,28 +609,23 @@ if models_loaded:
             df_pca_plot['PCA_1'] = all_pca[:, 0]
             df_pca_plot['PCA_2'] = all_pca[:, 1]
             
-            # Map Cluster IDs to Personas
             cluster_id_to_persona = {item['cluster_id']: item['persona'] for item in cluster_profiles}
             df_pca_plot['Persona'] = df_pca_plot['Cluster'].map(cluster_id_to_persona)
             
             fig_pca, ax_pca = plt.subplots(figsize=(7, 5))
-            fig_pca.patch.set_facecolor('#f8fafc')
-            ax_pca.set_facecolor('#f8fafc')
             
-            # Scatter plot of dataset
             sns.scatterplot(
                 data=df_pca_plot,
                 x='PCA_1', 
                 y='PCA_2',
                 hue='Persona',
-                palette=['#1e3a8a', '#10b981', '#ef4444', '#f59e0b'],
-                alpha=0.3,
+                palette=['#3b82f6', '#10b981', '#ef4444', '#fb923c'],
+                alpha=0.35,
                 s=15,
                 edgecolor=None,
                 ax=ax_pca
             )
             
-            # Plot the simulated customer
             if 'sim_pca_coords' in locals():
                 ax_pca.scatter(
                     sim_pca_coords[0], 
@@ -627,12 +639,12 @@ if models_loaded:
                     zorder=10
                 )
                 
-            ax_pca.set_title("Customer Cohorts Distribution Map", fontsize=11, fontweight='bold')
+            ax_pca.set_title("Customer Cohorts Distribution Map", fontsize=12, fontweight='bold', color='#f1f5f9')
             ax_pca.set_xlabel("PCA Dimension 1 (Demographics & Service Density)")
             ax_pca.set_ylabel("PCA Dimension 2 (Contract & Billing Mode)")
             ax_pca.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
             
-            # Tight layout
+            apply_dark_plot_style(ax_pca, fig_pca)
             plt.tight_layout()
             st.pyplot(fig_pca)
             
@@ -649,23 +661,21 @@ if models_loaded:
                 p_monthly = profile['avg_monthly_charges']
                 p_tenure = profile['avg_tenure']
                 
-                # Select theme colors based on cluster id
-                colors = ["#1e3a8a", "#10b981", "#ef4444", "#f59e0b"]
+                colors = ["#3b82f6", "#10b981", "#ef4444", "#fb923c"]
                 c_theme = colors[p_id]
                 
-                # Check if simulated customer is in this cluster
-                highlight_border = "border: 2px solid #eab308; box-shadow: 0 0 10px rgba(234, 179, 8, 0.2);" if ('sim_cluster' in locals() and sim_cluster == p_id) else "border: 1px solid #e2e8f0;"
-                highlight_marker = "🌟 <b>(Simulated Customer Cluster)</b><br>" if ('sim_cluster' in locals() and sim_cluster == p_id) else ""
+                highlight_border = "border: 2px solid #eab308; box-shadow: 0 0 10px rgba(234, 179, 8, 0.3);" if ('sim_cluster' in locals() and sim_cluster == p_id) else "border: 1px solid #334155;"
+                highlight_marker = "🌟 <span style='color: #eab308; font-weight: bold;'>Simulated Customer Cluster</span><br>" if ('sim_cluster' in locals() and sim_cluster == p_id) else ""
                 
                 st.markdown(f"""
-                <div style="background-color: white; border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; {highlight_border}">
+                <div style="background-color: #1e293b; border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; {highlight_border}">
                     {highlight_marker}
                     <div style="font-weight: 800; font-size: 1.05rem; color: {c_theme}; margin-bottom: 0.25rem;">Segment {p_id}: {p_name} ({p_size:,} Accounts)</div>
-                    <div style="font-size: 0.85rem; color: #475569; font-style: italic; margin-bottom: 0.5rem;">{p_desc}</div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: #334155;">
+                    <div style="font-size: 0.85rem; color: #94a3b8; font-style: italic; margin-bottom: 0.5rem;">{p_desc}</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: #cbd5e1;">
                         <span>Tenure: {p_tenure:.1f} mo</span>
                         <span>Monthly: ${p_monthly:.2f}</span>
-                        <span style="color: {'#ef4444' if p_churn > 0.25 else '#166534'};">Churn: {p_churn:.1%}</span>
+                        <span style="color: {'#ef4444' if p_churn > 0.25 else '#34d399'};">Churn: {p_churn:.1%}</span>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -677,27 +687,21 @@ if models_loaded:
         st.markdown('<div class="section-title">Batch Analytics & Retention Outreach Target Generator</div>', unsafe_allow_html=True)
         st.write("Generate and export lists of high-value customers with elevated churn risks to power targeted retention outreach programs.")
         
-        # Build batch analysis dataset
         df_batch = df_raw.copy()
         
-        # Add predictions and expected revenue loss
         df_batch['ChurnProbability'] = churn_probs
         df_batch['ExpectedMonthlyRevenueLoss'] = df_batch['ChurnProbability'] * df_batch['MonthlyCharges']
         
-        # Clean cluster mappings
         encoded_all = preprocessor_clustering.transform(df_raw.drop(columns=['customerID', 'Churn']).assign(SeniorCitizen=df_raw['SeniorCitizen_Str']))
         df_batch['ClusterID'] = kmeans_model.predict(encoded_all)
         df_batch['CohortPersona'] = df_batch['ClusterID'].map(cluster_id_to_persona)
         
-        # Sort by Expected Revenue Loss
         df_batch_sorted = df_batch.sort_values(by='ExpectedMonthlyRevenueLoss', ascending=False)
         
-        # Sidebar or UI filter for Churn Probability
         cutoff_slider = st.slider("Select Churn Probability Cutoff (%) for outreach", 10, 90, 50)
         
         filtered_batch = df_batch_sorted[df_batch_sorted['ChurnProbability'] >= (cutoff_slider / 100.0)]
         
-        # Metrics for the batch
         b_c1, b_c2, b_c3 = st.columns(3)
         with b_c1:
             st.metric("Outreach Targets Found", f"{len(filtered_batch):,}")
@@ -706,7 +710,6 @@ if models_loaded:
         with b_c3:
             st.metric("Total Expected Revenue Loss", f"${filtered_batch['ExpectedMonthlyRevenueLoss'].sum():,.2f}")
             
-        # Display sample table
         display_cols = [
             'customerID', 'gender', 'tenure', 'Contract', 'InternetService', 
             'MonthlyCharges', 'ChurnProbability', 'ExpectedMonthlyRevenueLoss', 'CohortPersona'
@@ -714,15 +717,14 @@ if models_loaded:
         
         st.markdown("### 📋 Outreach Target List (Top 100 Highest Expected Loss)")
         
-        # Format table for display
         df_display = filtered_batch[display_cols].head(100).copy()
         df_display['ChurnProbability'] = df_display['ChurnProbability'].map(lambda x: f"{x:.1%}")
         df_display['MonthlyCharges'] = df_display['MonthlyCharges'].map(lambda x: f"${x:.2f}")
         df_display['ExpectedMonthlyRevenueLoss'] = df_display['ExpectedMonthlyRevenueLoss'].map(lambda x: f"${x:.2f}")
         
+        # Display as standard dataframe (which Streamlit formats nicely in dark mode)
         st.dataframe(df_display, use_container_width=True)
         
-        # Download export CSV
         export_df = filtered_batch[[
             'customerID', 'gender', 'SeniorCitizen', 'Partner', 'Dependents', 'tenure', 
             'Contract', 'PaperlessBilling', 'PaymentMethod', 'MonthlyCharges', 'TotalCharges',
