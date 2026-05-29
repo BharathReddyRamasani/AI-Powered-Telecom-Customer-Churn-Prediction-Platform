@@ -1,0 +1,54 @@
+[
+    {
+        "cluster_id": 0,
+        "persona": "Premium Loyalists",
+        "description": "Long-term contract, high monthly spend. High value, low risk. Value premium services, support, and stability.",
+        "avg_tenure": 59.46331658291457,
+        "avg_monthly_charges": 91.17542713567838,
+        "avg_total_charges": 5413.054623115578,
+        "churn_rate": 0.13366834170854272,
+        "dominant_contract": "Two year",
+        "dominant_payment": "Bank transfer (automatic)",
+        "dominant_internet": "Fiber optic",
+        "size": 1990
+    },
+    {
+        "cluster_id": 1,
+        "persona": "Standard Savers",
+        "description": "Long-term contract, low monthly spend. Budget-conscious but stable, highly loyal, low churn risk.",
+        "avg_tenure": 30.667763157894736,
+        "avg_monthly_charges": 21.076282894736842,
+        "avg_total_charges": 665.2203289473683,
+        "churn_rate": 0.07434210526315789,
+        "dominant_contract": "Two year",
+        "dominant_payment": "Mailed check",
+        "dominant_internet": "No",
+        "size": 1520
+    },
+    {
+        "cluster_id": 2,
+        "persona": "High-Risk Tech-Savvy",
+        "description": "Month-to-month, high monthly charges. Heavy internet/streaming users, highly sensitive to service quality and price. High risk of churn.",
+        "avg_tenure": 15.56306546035125,
+        "avg_monthly_charges": 84.59345396487493,
+        "avg_total_charges": 1344.8747472059604,
+        "churn_rate": 0.5699840340606706,
+        "dominant_contract": "Month-to-month",
+        "dominant_payment": "Electronic check",
+        "dominant_internet": "Fiber optic",
+        "size": 1879
+    },
+    {
+        "cluster_id": 3,
+        "persona": "Budget Month-to-Month",
+        "description": "Month-to-month, low monthly charges. Mostly basic services (phone only or DSL). High price sensitivity, moderate-to-high risk.",
+        "avg_tenure": 20.57212416311625,
+        "avg_monthly_charges": 50.66028606208156,
+        "avg_total_charges": 1062.7117772367621,
+        "churn_rate": 0.2550213024954352,
+        "dominant_contract": "Month-to-month",
+        "dominant_payment": "Mailed check",
+        "dominant_internet": "DSL",
+        "size": 1643
+    }
+]
