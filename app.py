@@ -1,7 +1,6 @@
 import os
 import json
 import joblib
-import textwrap
 import pandas as pd
 import numpy as np
 import streamlit as st
@@ -234,10 +233,10 @@ except Exception as e:
     models_loaded = False
 
 # ---------------------------------------------------------
-# 4. SIDEBAR CONTROLS
+# 4. SIDEBAR CONTROLS (EMOJI TOWER REPLACES SIDEBAR PNG)
 # ---------------------------------------------------------
-st.sidebar.image("https://img.icons8.com/color/96/000000/telecommunication-tower.png", width=60)
-st.sidebar.markdown("### **Telecom Churn Engine**")
+st.sidebar.markdown("<div style='text-align: center; font-size: 2.8rem; margin-top: 0.5rem; margin-bottom: 0.25rem;'>📡</div>", unsafe_allow_html=True)
+st.sidebar.markdown("<h3 style='text-align: center; margin-top: 0;'>Telecom Churn Engine</h3>", unsafe_allow_html=True)
 st.sidebar.write("An enterprise customer intelligence platform powered by Random Forest Classification and K-Means Clustering.")
 
 if models_loaded:
@@ -249,7 +248,7 @@ if models_loaded:
 # ---------------------------------------------------------
 # 5. MAIN INTERFACE HEADER (SPACE EFFICIENT HORIZONTAL)
 # ---------------------------------------------------------
-st.markdown(textwrap.dedent("""
+st.markdown("""
 <div class="app-header">
     <div style="display: flex; align-items: center; gap: 0.85rem;">
         <span style="font-size: 1.8rem; line-height: 1;">📡</span>
@@ -259,7 +258,7 @@ st.markdown(textwrap.dedent("""
         </div>
     </div>
 </div>
-"""), unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 if models_loaded:
     # Setup tabs
@@ -292,37 +291,11 @@ if models_loaded:
         # Render KPI cards
         kpi_col1, kpi_col2, kpi_col3, kpi_col4 = st.columns(4)
         
-        with kpi_col1:
-            st.markdown(textwrap.dedent(f"""
-            <div class="metric-card">
-                <div class="metric-val" style="color: #60a5fa;">{total_customers:,}</div>
-                <div class="metric-label">Total Accounts</div>
-            </div>
-            """), unsafe_allow_html=True)
-            
-        with kpi_col2:
-            st.markdown(textwrap.dedent(f"""
-            <div class="metric-card">
-                <div class="metric-val" style="color: #f87171;">{actual_churn_rate:.1%}</div>
-                <div class="metric-label">Historical Churn</div>
-            </div>
-            """), unsafe_allow_html=True)
-            
-        with kpi_col3:
-            st.markdown(textwrap.dedent(f"""
-            <div class="metric-card">
-                <div class="metric-val" style="color: #34d399;">${total_monthly_revenue/1e3:.1f}k</div>
-                <div class="metric-label">Monthly Contract Value</div>
-            </div>
-            """), unsafe_allow_html=True)
-            
-        with kpi_col4:
-            st.markdown(textwrap.dedent(f"""
-            <div class="metric-card">
-                <div class="metric-val" style="color: #fb923c;">${expected_monthly_loss/1e3:.1f}k</div>
-                <div class="metric-label">Monthly Expected Churn Loss</div>
-            </div>
-            """), unsafe_allow_html=True)
+        # Render single-line HTML to avoid any Markdown block parsing glitches
+        kpi_col1.markdown(f'<div class="metric-card"><div class="metric-val" style="color: #60a5fa;">{total_customers:,}</div><div class="metric-label">Total Accounts</div></div>', unsafe_allow_html=True)
+        kpi_col2.markdown(f'<div class="metric-card"><div class="metric-val" style="color: #f87171;">{actual_churn_rate:.1%}</div><div class="metric-label">Historical Churn</div></div>', unsafe_allow_html=True)
+        kpi_col3.markdown(f'<div class="metric-card"><div class="metric-val" style="color: #34d399;">${total_monthly_revenue/1e3:.1f}k</div><div class="metric-label">Monthly Contract Value</div></div>', unsafe_allow_html=True)
+        kpi_col4.markdown(f'<div class="metric-card"><div class="metric-val" style="color: #fb923c;">${expected_monthly_loss/1e3:.1f}k</div><div class="metric-label">Monthly Expected Churn Loss</div></div>', unsafe_allow_html=True)
             
         st.markdown('<div class="section-title">Churn Vulnerability & Drivers</div>', unsafe_allow_html=True)
         
@@ -510,43 +483,15 @@ if models_loaded:
             c_color = badge_colors[sim_cluster]
             c_bg = badge_bg[sim_cluster]
             
-            # Wrap indented multiline HTML in textwrap.dedent
-            st.markdown(textwrap.dedent(f"""
-            <div class="risk-banner {risk_style}">
-                <div style="font-size: 1.05rem; font-weight: 800;">{risk_icon} Account Status: {risk_cat}</div>
-                <div style="font-size: 1.85rem; font-weight: 900; margin: 0.3rem 0; line-height: 1.1;">{prob_churn:.1%}</div>
-                <div style="font-size: 0.8rem; opacity: 0.95;">Probability of churn within next 30 days</div>
-            </div>
-            """), unsafe_allow_html=True)
+            # Pure single-line HTML rendering prevents any Markdown formatting issues
+            st.markdown(f'<div class="risk-banner {risk_style}"><div style="font-size: 1.05rem; font-weight: 800;">{risk_icon} Account Status: {risk_cat}</div><div style="font-size: 1.85rem; font-weight: 900; margin: 0.3rem 0; line-height: 1.1;">{prob_churn:.1%}</div><div style="font-size: 0.8rem; opacity: 0.95;">Probability of churn within next 30 days</div></div>', unsafe_allow_html=True)
             
             sub_c1, sub_c2 = st.columns(2)
-            with sub_c1:
-                st.markdown(textwrap.dedent(f"""
-                <div class="metric-card" style="padding: 0.75rem;">
-                    <div class="metric-val" style="font-size: 1.4rem; color: #f8fafc;">${sim_monthly:.2f}</div>
-                    <div class="metric-label" style="font-size: 0.7rem;">Monthly Billing</div>
-                </div>
-                """), unsafe_allow_html=True)
-            with sub_c2:
-                st.markdown(textwrap.dedent(f"""
-                <div class="metric-card" style="padding: 0.75rem; border: 1px solid #f9731640; background-color: #2c1a10;">
-                    <div class="metric-val" style="font-size: 1.4rem; color: #fb923c;">${exp_loss_val:.2f}</div>
-                    <div class="metric-label" style="font-size: 0.7rem;">Expected Monthly Loss</div>
-                </div>
-                """), unsafe_allow_html=True)
+            sub_c1.markdown(f'<div class="metric-card" style="padding: 0.75rem;"><div class="metric-val" style="font-size: 1.4rem; color: #f8fafc;">${sim_monthly:.2f}</div><div class="metric-label" style="font-size: 0.7rem;">Monthly Billing</div></div>', unsafe_allow_html=True)
+            sub_c2.markdown(f'<div class="metric-card" style="padding: 0.75rem; border: 1px solid #f9731640; background-color: #2c1a10;"><div class="metric-val" style="font-size: 1.4rem; color: #fb923c;">${exp_loss_val:.2f}</div><div class="metric-label" style="font-size: 0.7rem;">Expected Monthly Loss</div></div>', unsafe_allow_html=True)
                 
             st.markdown('<div class="section-title">Identified Segment Persona</div>', unsafe_allow_html=True)
-            st.markdown(textwrap.dedent(f"""
-            <div style="background-color: {c_bg}; border: 1px solid {c_color}60; border-radius: 10px; padding: 0.85rem;">
-                <div class="persona-badge" style="background-color: {c_color}; color: white; font-size: 0.75rem; padding: 0.2rem 0.5rem;">Segment {sim_cluster}: {sim_profile['persona']}</div>
-                <div style="font-size: 0.825rem; line-height: 1.4; color: #cbd5e1;">
-                    <strong>Profile Description:</strong> {sim_profile['description']}<br>
-                    <strong>Avg tenure in segment:</strong> {sim_profile['avg_tenure']:.1f} months &nbsp;|&nbsp; 
-                    <strong>Avg Monthly Spend:</strong> ${sim_profile['avg_monthly_charges']:.2f}<br>
-                    <strong>Segment Churn Rate:</strong> <span style="color: {c_color}; font-weight: bold;">{sim_profile['churn_rate']:.1%}</span>
-                </div>
-            </div>
-            """), unsafe_allow_html=True)
+            st.markdown(f'<div style="background-color: {c_bg}; border: 1px solid {c_color}60; border-radius: 10px; padding: 0.85rem;"><div class="persona-badge" style="background-color: {c_color}; color: white; font-size: 0.75rem; padding: 0.2rem 0.5rem;">Segment {sim_cluster}: {sim_profile["persona"]}</div><div style="font-size: 0.825rem; line-height: 1.4; color: #cbd5e1;"><strong>Profile Description:</strong> {sim_profile["description"]}<br><strong>Avg tenure in segment:</strong> {sim_profile["avg_tenure"]:.1f} months &nbsp;|&nbsp; <strong>Avg Monthly Spend:</strong> ${sim_profile["avg_monthly_charges"]:.2f}<br><strong>Segment Churn Rate:</strong> <span style="color: {c_color}; font-weight: bold;">{sim_profile["churn_rate"]:.1%}</span></div></div>', unsafe_allow_html=True)
             
             st.markdown('<div class="section-title">Automated Retention Recommendations</div>', unsafe_allow_html=True)
             
@@ -589,12 +534,7 @@ if models_loaded:
                 })
                 
             for rec in recommendations:
-                st.markdown(textwrap.dedent(f"""
-                <div class="recommendation-box">
-                    <div class="rec-title">{rec['title']}</div>
-                    <div class="rec-desc">{rec['desc']}</div>
-                </div>
-                """), unsafe_allow_html=True)
+                st.markdown(f'<div class="recommendation-box"><div class="rec-title">{rec["title"]}</div><div class="rec-desc">{rec["desc"]}</div></div>', unsafe_allow_html=True)
 
     # ---------------------------------------------------------
     # TAB 3: COHORTS & SEGMENTS
@@ -676,19 +616,20 @@ if models_loaded:
                 highlight_border = "border: 2px solid #eab308; box-shadow: 0 0 8px rgba(234, 179, 8, 0.25);" if ('sim_cluster' in locals() and sim_cluster == p_id) else "border: 1px solid #334155;"
                 highlight_marker = "🌟 <span style='color: #eab308; font-weight: bold; font-size: 0.8rem;'>Simulated Customer Cluster</span><br>" if ('sim_cluster' in locals() and sim_cluster == p_id) else ""
                 
-                # Wrapped in textwrap.dedent to strip spaces and prevent code block rendering!
-                st.markdown(textwrap.dedent(f"""
-                <div style="background-color: #1e293b; border-radius: 8px; padding: 0.65rem 0.85rem; margin-bottom: 0.5rem; {highlight_border}">
-                    {highlight_marker}
-                    <div style="font-weight: 800; font-size: 0.925rem; color: {c_theme}; margin-bottom: 0.2rem;">Segment {p_id}: {p_name} ({p_size:,} Accounts)</div>
-                    <div style="font-size: 0.775rem; color: #cbd5e1; font-style: italic; margin-bottom: 0.4rem; line-height: 1.3;">{p_desc}</div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.775rem; font-weight: 600; color: #cbd5e1;">
-                        <span>Tenure: {p_tenure:.1f} mo</span>
-                        <span>Monthly: ${p_monthly:.2f}</span>
-                        <span style="color: {'#ef4444' if p_churn > 0.25 else '#34d399'};">Churn: {p_churn:.1%}</span>
-                    </div>
-                </div>
-                """), unsafe_allow_html=True)
+                # Single-line concatenated construction prevents Markdown from seeing blank lines or leading spaces, which solves the raw code printing bug.
+                html_content = (
+                    f'<div style="background-color: #1e293b; border-radius: 8px; padding: 0.65rem 0.85rem; margin-bottom: 0.5rem; {highlight_border}">'
+                    f'{highlight_marker}'
+                    f'<div style="font-weight: 800; font-size: 0.925rem; color: {c_theme}; margin-bottom: 0.2rem;">Segment {p_id}: {p_name} ({p_size:,} Accounts)</div>'
+                    f'<div style="font-size: 0.775rem; color: #cbd5e1; font-style: italic; margin-bottom: 0.4rem; line-height: 1.3;">{p_desc}</div>'
+                    f'<div style="display: flex; justify-content: space-between; font-size: 0.775rem; font-weight: 600; color: #cbd5e1;">'
+                    f'<span>Tenure: {p_tenure:.1f} mo</span>'
+                    f'<span>Monthly: ${p_monthly:.2f}</span>'
+                    f'<span style="color: {"#ef4444" if p_churn > 0.25 else "#34d399"};">Churn: {p_churn:.1%}</span>'
+                    f'</div></div>'
+                )
+                
+                st.markdown(html_content, unsafe_allow_html=True)
                 
     # ---------------------------------------------------------
     # TAB 4: BATCH ANALYSIS & EXPORT
