@@ -1,6 +1,7 @@
 import os
 import json
 import joblib
+import textwrap
 import pandas as pd
 import numpy as np
 import streamlit as st
@@ -27,52 +28,54 @@ st.markdown("""
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     
-    /* Header styling */
+    /* Low-profile Horizontal Header styling (Space Efficient) */
     .app-header {
-        background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
+        background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 60%, #3b82f6 100%);
         color: white;
-        padding: 2.2rem 2rem;
-        border-radius: 16px;
-        margin-bottom: 2rem;
-        box-shadow: 0 10px 25px -5px rgba(3b, 82, 246, 0.15);
+        padding: 0.85rem 1.25rem;
+        border-radius: 12px;
+        margin-bottom: 1.25rem;
+        box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.15);
         border: 1px solid #1e3a8a;
     }
     .app-title {
-        font-size: 2.2rem;
+        font-size: 1.45rem;
         font-weight: 800;
         margin: 0;
         letter-spacing: -0.025em;
+        line-height: 1.2;
     }
     .app-subtitle {
-        font-size: 1.05rem;
+        font-size: 0.85rem;
         opacity: 0.9;
-        margin-top: 0.5rem;
+        margin-top: 0.2rem;
         font-weight: 400;
+        line-height: 1.3;
     }
     
-    /* Sleek Slate Cards */
+    /* Sleek Slate Cards (Space Efficient) */
     .metric-card {
         background-color: #1e293b;
-        border-radius: 12px;
-        padding: 1.5rem;
+        border-radius: 10px;
+        padding: 0.85rem 1rem;
         border: 1px solid #334155;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
         text-align: center;
         transition: transform 0.2s, box-shadow 0.2s;
     }
     .metric-card:hover {
-        transform: translateY(-2px);
+        transform: translateY(-1px);
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         border-color: #475569;
     }
     .metric-val {
-        font-size: 2rem;
+        font-size: 1.55rem;
         font-weight: 800;
-        line-height: 1;
-        margin-bottom: 0.5rem;
+        line-height: 1.1;
+        margin-bottom: 0.2rem;
     }
     .metric-label {
-        font-size: 0.825rem;
+        font-size: 0.725rem;
         color: #94a3b8;
         font-weight: 600;
         text-transform: uppercase;
@@ -81,10 +84,10 @@ st.markdown("""
     
     /* Custom Alerts for Churn Risk Simulator */
     .risk-banner {
-        padding: 1.5rem;
-        border-radius: 12px;
-        margin-bottom: 1.5rem;
-        border-left: 6px solid;
+        padding: 0.85rem 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        border-left: 5px solid;
     }
     .risk-banner-critical {
         background-color: #2d1616;
@@ -115,47 +118,48 @@ st.markdown("""
         background-color: #1e293b;
         border: 1px solid #334155;
         border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 0.75rem;
+        padding: 0.65rem 0.85rem;
+        margin-bottom: 0.5rem;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
     .rec-title {
         font-weight: 700;
-        font-size: 1rem;
-        margin-bottom: 0.25rem;
+        font-size: 0.85rem;
+        margin-bottom: 0.15rem;
         color: #60a5fa;
     }
     .rec-desc {
-        font-size: 0.9rem;
+        font-size: 0.775rem;
         color: #cbd5e1;
+        line-height: 1.35;
     }
     
     /* Segment Persona Badge */
     .persona-badge {
         display: inline-block;
-        padding: 0.35rem 0.75rem;
+        padding: 0.2rem 0.5rem;
         border-radius: 9999px;
-        font-size: 0.85rem;
+        font-size: 0.75rem;
         font-weight: 700;
         text-transform: uppercase;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.35rem;
     }
     
     /* Section Headers */
     .section-title {
-        font-size: 1.35rem;
+        font-size: 1.15rem;
         font-weight: 700;
         color: #f1f5f9;
-        margin-top: 1.5rem;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
+        margin-top: 1.15rem;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.35rem;
         border-bottom: 2px solid #334155;
     }
     
     /* Tabs font color adaptation */
     .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
         font-weight: 700;
-        font-size: 1.05rem;
+        font-size: 0.95rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -173,13 +177,13 @@ def apply_dark_plot_style(ax, fig):
     ax.spines['top'].set_color('#475569')
     ax.spines['left'].set_color('#475569')
     ax.spines['right'].set_color('#475569')
-    ax.grid(True, color='#334155', linestyle='--', alpha=0.5)
+    ax.grid(True, color='#334155', linestyle='--', alpha=0.4)
     
     # Label colors
-    ax.xaxis.label.set_color('#94a3b8')
-    ax.yaxis.label.set_color('#94a3b8')
+    ax.xaxis.label.set_color('#cbd5e1')
+    ax.yaxis.label.set_color('#cbd5e1')
     ax.title.set_color('#f1f5f9')
-    ax.tick_params(colors='#94a3b8', which='both')
+    ax.tick_params(colors='#94a3b8', which='both', labelsize=8.5)
     
     # Legend color
     legend = ax.get_legend()
@@ -188,9 +192,10 @@ def apply_dark_plot_style(ax, fig):
         legend.get_frame().set_edgecolor('#475569')
         for text in legend.get_texts():
             text.set_color('#cbd5e1')
+            text.set_size(8)
 
 # ---------------------------------------------------------
-# 3. LOAD DATA AND MODELS (WITH RELATIVE PATHS & CACHING)
+# 3. LOAD DATA AND MODELS (WITH CACHING & RELATIVE PATHS)
 # ---------------------------------------------------------
 @st.cache_data
 def load_raw_data():
@@ -231,7 +236,7 @@ except Exception as e:
 # ---------------------------------------------------------
 # 4. SIDEBAR CONTROLS
 # ---------------------------------------------------------
-st.sidebar.image("https://img.icons8.com/color/96/000000/telecommunication-tower.png", width=70)
+st.sidebar.image("https://img.icons8.com/color/96/000000/telecommunication-tower.png", width=60)
 st.sidebar.markdown("### **Telecom Churn Engine**")
 st.sidebar.write("An enterprise customer intelligence platform powered by Random Forest Classification and K-Means Clustering.")
 
@@ -242,14 +247,19 @@ if models_loaded:
     st.sidebar.info(f"Active Customers Analyzed: {len(df_raw):,}")
 
 # ---------------------------------------------------------
-# 5. MAIN INTERFACE HEADER
+# 5. MAIN INTERFACE HEADER (SPACE EFFICIENT HORIZONTAL)
 # ---------------------------------------------------------
-st.markdown("""
+st.markdown(textwrap.dedent("""
 <div class="app-header">
-    <h1 class="app-title">📡 AI-Powered Telecom Customer Churn Prediction Platform</h1>
-    <p class="app-subtitle">Identify customer churn risks, calculate monthly revenue vulnerability, segment accounts, and deploy retention strategies in real time.</p>
+    <div style="display: flex; align-items: center; gap: 0.85rem;">
+        <span style="font-size: 1.8rem; line-height: 1;">📡</span>
+        <div>
+            <h1 class="app-title">AI-Powered Telecom Customer Churn Prediction Platform</h1>
+            <p class="app-subtitle">Identify customer churn risks, calculate monthly revenue vulnerability, segment accounts, and deploy retention strategies in real time.</p>
+        </div>
+    </div>
 </div>
-""", unsafe_allow_html=True)
+"""), unsafe_allow_html=True)
 
 if models_loaded:
     # Setup tabs
@@ -283,36 +293,36 @@ if models_loaded:
         kpi_col1, kpi_col2, kpi_col3, kpi_col4 = st.columns(4)
         
         with kpi_col1:
-            st.markdown(f"""
+            st.markdown(textwrap.dedent(f"""
             <div class="metric-card">
                 <div class="metric-val" style="color: #60a5fa;">{total_customers:,}</div>
                 <div class="metric-label">Total Accounts</div>
             </div>
-            """, unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
             
         with kpi_col2:
-            st.markdown(f"""
+            st.markdown(textwrap.dedent(f"""
             <div class="metric-card">
                 <div class="metric-val" style="color: #f87171;">{actual_churn_rate:.1%}</div>
                 <div class="metric-label">Historical Churn</div>
             </div>
-            """, unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
             
         with kpi_col3:
-            st.markdown(f"""
+            st.markdown(textwrap.dedent(f"""
             <div class="metric-card">
                 <div class="metric-val" style="color: #34d399;">${total_monthly_revenue/1e3:.1f}k</div>
                 <div class="metric-label">Monthly Contract Value</div>
             </div>
-            """, unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
             
         with kpi_col4:
-            st.markdown(f"""
+            st.markdown(textwrap.dedent(f"""
             <div class="metric-card">
                 <div class="metric-val" style="color: #fb923c;">${expected_monthly_loss/1e3:.1f}k</div>
                 <div class="metric-label">Monthly Expected Churn Loss</div>
             </div>
-            """, unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
             
         st.markdown('<div class="section-title">Churn Vulnerability & Drivers</div>', unsafe_allow_html=True)
         
@@ -321,7 +331,7 @@ if models_loaded:
         
         with chart_col1:
             # Churn distribution pie chart
-            fig, ax = plt.subplots(figsize=(6, 4))
+            fig, ax = plt.subplots(figsize=(6, 3.8))
             fig.patch.set_facecolor('#1e293b')
             ax.set_facecolor('#1e293b')
             
@@ -333,32 +343,31 @@ if models_loaded:
                 startangle=90, 
                 colors=['#3b82f6', '#ef4444'],
                 wedgeprops=dict(width=0.45, edgecolor='#334155'),
-                textprops=dict(color='#cbd5e1', fontweight='bold')
+                textprops=dict(color='#cbd5e1', fontweight='bold', fontsize=9.5)
             )
             for autotext in autotexts:
                 autotext.set_color('white')
             
-            ax.set_title("Customer Cohort Status (Actual)", fontsize=12, fontweight='bold', pad=15, color='#f1f5f9')
+            ax.set_title("Customer Cohort Status (Actual)", fontsize=11, fontweight='bold', pad=10, color='#f1f5f9')
             st.pyplot(fig)
             
             # Contract type churn analysis
-            fig2, ax2 = plt.subplots(figsize=(6, 4.5))
+            fig2, ax2 = plt.subplots(figsize=(6, 4))
             contract_churn = pd.crosstab(df_raw['Contract'], df_raw['Churn'], normalize='index') * 100
             contract_churn.plot(kind='bar', stacked=True, color=['#3b82f6', '#ef4444'], ax=ax2, edgecolor='#334155')
             
-            ax2.set_title("Churn Rate by Contract Type", fontsize=12, fontweight='bold', pad=15, color='#f1f5f9')
-            ax2.set_ylabel("Percentage (%)")
-            ax2.set_xlabel("Contract Type")
-            ax2.legend(["Stayed", "Churned"], loc="lower left")
+            ax2.set_title("Churn Rate by Contract Type", fontsize=11, fontweight='bold', pad=10, color='#f1f5f9')
+            ax2.set_ylabel("Percentage (%)", fontsize=8.5)
+            ax2.set_xlabel("Contract Type", fontsize=8.5)
+            ax2.legend(["Stayed", "Churned"], loc="lower left", fontsize=8)
             plt.xticks(rotation=0)
             apply_dark_plot_style(ax2, fig2)
             st.pyplot(fig2)
             
         with chart_col2:
             # Model Feature Importance
-            fig3, ax3 = plt.subplots(figsize=(6, 9.5))
+            fig3, ax3 = plt.subplots(figsize=(6, 8.5))
             
-            # Extract features from pipeline preprocessor
             classifier = churn_model.named_steps['classifier']
             preprocessor = churn_model.named_steps['preprocessor']
             
@@ -376,8 +385,8 @@ if models_loaded:
             
             colors = ['#60a5fa' if x < feat_imp_df['Importance'].max() * 0.7 else '#2563eb' for x in feat_imp_df['Importance']]
             ax3.barh(feat_imp_df['Feature'], feat_imp_df['Importance'], color=colors, edgecolor='#334155')
-            ax3.set_title("Key Drivers of Customer Churn (RF Importance)", fontsize=12, fontweight='bold', pad=15, color='#f1f5f9')
-            ax3.set_xlabel("Relative Predictive Power")
+            ax3.set_title("Key Drivers of Customer Churn (RF Importance)", fontsize=11, fontweight='bold', pad=10, color='#f1f5f9')
+            ax3.set_xlabel("Relative Predictive Power", fontsize=8.5)
             apply_dark_plot_style(ax3, fig3)
             st.pyplot(fig3)
             
@@ -496,48 +505,48 @@ if models_loaded:
             
             sim_profile = next(item for item in cluster_profiles if item["cluster_id"] == sim_cluster)
             
-            # Bright colors suitable for dark themes
             badge_colors = ["#3b82f6", "#10b981", "#ef4444", "#fb923c"]
-            badge_bg = ["#1e3a8a40", "#064e3b40", "#7f1d1d40", "#7c2d1240"]
+            badge_bg = ["#1e3a8a30", "#064e3b30", "#7f1d1d30", "#7c2d1230"]
             c_color = badge_colors[sim_cluster]
             c_bg = badge_bg[sim_cluster]
             
-            st.markdown(f"""
+            # Wrap indented multiline HTML in textwrap.dedent
+            st.markdown(textwrap.dedent(f"""
             <div class="risk-banner {risk_style}">
-                <div style="font-size: 1.25rem; font-weight: 800;">{risk_icon} Account Status: {risk_cat}</div>
-                <div style="font-size: 2.2rem; font-weight: 900; margin: 0.5rem 0;">{prob_churn:.1%}</div>
-                <div style="font-size: 0.95rem; font-weight: 500; opacity: 0.95;">Probability of churn within next 30 days</div>
+                <div style="font-size: 1.05rem; font-weight: 800;">{risk_icon} Account Status: {risk_cat}</div>
+                <div style="font-size: 1.85rem; font-weight: 900; margin: 0.3rem 0; line-height: 1.1;">{prob_churn:.1%}</div>
+                <div style="font-size: 0.8rem; opacity: 0.95;">Probability of churn within next 30 days</div>
             </div>
-            """, unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
             
             sub_c1, sub_c2 = st.columns(2)
             with sub_c1:
-                st.markdown(f"""
-                <div class="metric-card" style="padding: 1rem;">
-                    <div class="metric-val" style="font-size: 1.6rem; color: #f8fafc;">${sim_monthly:.2f}</div>
-                    <div class="metric-label" style="font-size: 0.75rem;">Monthly Billing</div>
+                st.markdown(textwrap.dedent(f"""
+                <div class="metric-card" style="padding: 0.75rem;">
+                    <div class="metric-val" style="font-size: 1.4rem; color: #f8fafc;">${sim_monthly:.2f}</div>
+                    <div class="metric-label" style="font-size: 0.7rem;">Monthly Billing</div>
                 </div>
-                """, unsafe_allow_html=True)
+                """), unsafe_allow_html=True)
             with sub_c2:
-                st.markdown(f"""
-                <div class="metric-card" style="padding: 1rem; border: 1px solid #f9731640; background-color: #2c1a10;">
-                    <div class="metric-val" style="font-size: 1.6rem; color: #fb923c;">${exp_loss_val:.2f}</div>
-                    <div class="metric-label" style="font-size: 0.75rem;">Expected Monthly Loss</div>
+                st.markdown(textwrap.dedent(f"""
+                <div class="metric-card" style="padding: 0.75rem; border: 1px solid #f9731640; background-color: #2c1a10;">
+                    <div class="metric-val" style="font-size: 1.4rem; color: #fb923c;">${exp_loss_val:.2f}</div>
+                    <div class="metric-label" style="font-size: 0.7rem;">Expected Monthly Loss</div>
                 </div>
-                """, unsafe_allow_html=True)
+                """), unsafe_allow_html=True)
                 
             st.markdown('<div class="section-title">Identified Segment Persona</div>', unsafe_allow_html=True)
-            st.markdown(f"""
-            <div style="background-color: {c_bg}; border: 1px solid {c_color}60; border-radius: 12px; padding: 1.25rem;">
-                <div class="persona-badge" style="background-color: {c_color}; color: white;">Segment {sim_cluster}: {sim_profile['persona']}</div>
-                <div style="font-size: 0.95rem; line-height: 1.5; color: #cbd5e1;">
+            st.markdown(textwrap.dedent(f"""
+            <div style="background-color: {c_bg}; border: 1px solid {c_color}60; border-radius: 10px; padding: 0.85rem;">
+                <div class="persona-badge" style="background-color: {c_color}; color: white; font-size: 0.75rem; padding: 0.2rem 0.5rem;">Segment {sim_cluster}: {sim_profile['persona']}</div>
+                <div style="font-size: 0.825rem; line-height: 1.4; color: #cbd5e1;">
                     <strong>Profile Description:</strong> {sim_profile['description']}<br>
-                    <strong>Avg tenure in segment:</strong> {sim_profile['avg_tenure']:.1f} months<br>
+                    <strong>Avg tenure in segment:</strong> {sim_profile['avg_tenure']:.1f} months &nbsp;|&nbsp; 
                     <strong>Avg Monthly Spend:</strong> ${sim_profile['avg_monthly_charges']:.2f}<br>
                     <strong>Segment Churn Rate:</strong> <span style="color: {c_color}; font-weight: bold;">{sim_profile['churn_rate']:.1%}</span>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """), unsafe_allow_html=True)
             
             st.markdown('<div class="section-title">Automated Retention Recommendations</div>', unsafe_allow_html=True)
             
@@ -580,12 +589,12 @@ if models_loaded:
                 })
                 
             for rec in recommendations:
-                st.markdown(f"""
+                st.markdown(textwrap.dedent(f"""
                 <div class="recommendation-box">
                     <div class="rec-title">{rec['title']}</div>
                     <div class="rec-desc">{rec['desc']}</div>
                 </div>
-                """, unsafe_allow_html=True)
+                """), unsafe_allow_html=True)
 
     # ---------------------------------------------------------
     # TAB 3: COHORTS & SEGMENTS
@@ -593,7 +602,7 @@ if models_loaded:
     with tab_cohorts:
         st.markdown('<div class="section-title">Customer Segmentation & Cohort Mapping (K-Means + PCA)</div>', unsafe_allow_html=True)
         
-        coh_col_plot, coh_col_stats = st.columns([1.2, 1])
+        coh_col_plot, coh_col_stats = st.columns([1.1, 1])
         
         with coh_col_plot:
             st.markdown("### 🗺️ PCA Dimension Space Projection")
@@ -612,7 +621,7 @@ if models_loaded:
             cluster_id_to_persona = {item['cluster_id']: item['persona'] for item in cluster_profiles}
             df_pca_plot['Persona'] = df_pca_plot['Cluster'].map(cluster_id_to_persona)
             
-            fig_pca, ax_pca = plt.subplots(figsize=(7, 5))
+            fig_pca, ax_pca = plt.subplots(figsize=(6.5, 4.5))
             
             sns.scatterplot(
                 data=df_pca_plot,
@@ -620,8 +629,8 @@ if models_loaded:
                 y='PCA_2',
                 hue='Persona',
                 palette=['#3b82f6', '#10b981', '#ef4444', '#fb923c'],
-                alpha=0.35,
-                s=15,
+                alpha=0.3,
+                s=12,
                 edgecolor=None,
                 ax=ax_pca
             )
@@ -632,17 +641,17 @@ if models_loaded:
                     sim_pca_coords[1], 
                     color='#eab308', 
                     edgecolor='#0f172a',
-                    s=250, 
+                    s=200, 
                     marker='*', 
-                    linewidths=2,
+                    linewidths=1.5,
                     label='Simulated Customer',
                     zorder=10
                 )
                 
-            ax_pca.set_title("Customer Cohorts Distribution Map", fontsize=12, fontweight='bold', color='#f1f5f9')
-            ax_pca.set_xlabel("PCA Dimension 1 (Demographics & Service Density)")
-            ax_pca.set_ylabel("PCA Dimension 2 (Contract & Billing Mode)")
-            ax_pca.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+            ax_pca.set_title("Customer Cohorts Distribution Map", fontsize=11, fontweight='bold', color='#f1f5f9')
+            ax_pca.set_xlabel("PCA Dimension 1 (Demographics & Service Density)", fontsize=8.5)
+            ax_pca.set_ylabel("PCA Dimension 2 (Contract & Billing Mode)", fontsize=8.5)
+            ax_pca.legend(bbox_to_anchor=(1.02, 1), loc='upper left', fontsize=7.5)
             
             apply_dark_plot_style(ax_pca, fig_pca)
             plt.tight_layout()
@@ -664,21 +673,22 @@ if models_loaded:
                 colors = ["#3b82f6", "#10b981", "#ef4444", "#fb923c"]
                 c_theme = colors[p_id]
                 
-                highlight_border = "border: 2px solid #eab308; box-shadow: 0 0 10px rgba(234, 179, 8, 0.3);" if ('sim_cluster' in locals() and sim_cluster == p_id) else "border: 1px solid #334155;"
-                highlight_marker = "🌟 <span style='color: #eab308; font-weight: bold;'>Simulated Customer Cluster</span><br>" if ('sim_cluster' in locals() and sim_cluster == p_id) else ""
+                highlight_border = "border: 2px solid #eab308; box-shadow: 0 0 8px rgba(234, 179, 8, 0.25);" if ('sim_cluster' in locals() and sim_cluster == p_id) else "border: 1px solid #334155;"
+                highlight_marker = "🌟 <span style='color: #eab308; font-weight: bold; font-size: 0.8rem;'>Simulated Customer Cluster</span><br>" if ('sim_cluster' in locals() and sim_cluster == p_id) else ""
                 
-                st.markdown(f"""
-                <div style="background-color: #1e293b; border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; {highlight_border}">
+                # Wrapped in textwrap.dedent to strip spaces and prevent code block rendering!
+                st.markdown(textwrap.dedent(f"""
+                <div style="background-color: #1e293b; border-radius: 8px; padding: 0.65rem 0.85rem; margin-bottom: 0.5rem; {highlight_border}">
                     {highlight_marker}
-                    <div style="font-weight: 800; font-size: 1.05rem; color: {c_theme}; margin-bottom: 0.25rem;">Segment {p_id}: {p_name} ({p_size:,} Accounts)</div>
-                    <div style="font-size: 0.85rem; color: #94a3b8; font-style: italic; margin-bottom: 0.5rem;">{p_desc}</div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: #cbd5e1;">
+                    <div style="font-weight: 800; font-size: 0.925rem; color: {c_theme}; margin-bottom: 0.2rem;">Segment {p_id}: {p_name} ({p_size:,} Accounts)</div>
+                    <div style="font-size: 0.775rem; color: #cbd5e1; font-style: italic; margin-bottom: 0.4rem; line-height: 1.3;">{p_desc}</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.775rem; font-weight: 600; color: #cbd5e1;">
                         <span>Tenure: {p_tenure:.1f} mo</span>
                         <span>Monthly: ${p_monthly:.2f}</span>
                         <span style="color: {'#ef4444' if p_churn > 0.25 else '#34d399'};">Churn: {p_churn:.1%}</span>
                     </div>
                 </div>
-                """, unsafe_allow_html=True)
+                """), unsafe_allow_html=True)
                 
     # ---------------------------------------------------------
     # TAB 4: BATCH ANALYSIS & EXPORT
@@ -722,7 +732,6 @@ if models_loaded:
         df_display['MonthlyCharges'] = df_display['MonthlyCharges'].map(lambda x: f"${x:.2f}")
         df_display['ExpectedMonthlyRevenueLoss'] = df_display['ExpectedMonthlyRevenueLoss'].map(lambda x: f"${x:.2f}")
         
-        # Display as standard dataframe (which Streamlit formats nicely in dark mode)
         st.dataframe(df_display, use_container_width=True)
         
         export_df = filtered_batch[[
